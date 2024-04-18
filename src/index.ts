@@ -8,20 +8,20 @@ const initBroker = async () => {
     
         ch.consume('calidad', async (msg: any) => {
             try {
-                // Deserializar el mensaje JSON recibido del broker
                 const datos = JSON.parse(msg.content.toString());
                 console.log('Datos recibidos:', datos);
 
-                // Extraer los valores de temperatura, luz y humedad
-                const { temperatura, luz, humedad } = datos;
+            
+                const { temperatura_C, luz, humedad, distancia } = datos;
+                const datosParaBD = {
+                    temperatura: temperatura_C,
+                    luz: luz,
+                    humedad: humedad,
+                    distancia: distancia
+                };
 
-                // Enviar los datos a la API REST como un objeto con los atributos separados
-                const response = await axios.post('http://localhost:3000/racimos', { 
-                    temperatura,
-                    luz,
-                    humedad
-                });
-
+                // Enviar los datos a la API
+                const response = await axios.post('http://3.215.18.246:3000/racimos', datosParaBD);
                 console.log('Respuesta de la API:', response.data);
             } catch (error) {
                 console.error('Error al enviar los datos a la API:', error);
